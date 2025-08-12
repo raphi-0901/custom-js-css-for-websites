@@ -1,23 +1,42 @@
 function highlightPMsModule() {
     const config = {
-        projectManagers: ['TR','BK','ERI', 'CRA', 'LSC', 'LT', 'JK', 'CL', 'LK','CH', 'RAW', 'BAL', 'DS', 'MIH', 'EBO', 'AST', 'TW', 'MB']
+        developers: ['TR', 'LT', 'JK', 'LK', 'RAW', 'DS'],
+        marketing: [
+            'BK',
+            'CL',
+            'SHO',
+            'TW',
+            'BAL',
+            'KK',
+            'CAS',
+            'DAR',
+            'BD',
+            'AFE',
+        ],
     };
 
     function highlightPMs() {
-        $('.content').find('.table-label-anx-private').each(function(i, val) {
-            if (config.projectManagers.includes($(val).text())) {
-                $(val).css({
-                    'color': '#640000',
-                    'border-left': '8px solid #FF0000'
-                });
-            }
-        });
+        document
+            .querySelectorAll('.content .table-label-anx-private')
+            .forEach((val) => {
+                const text = val.textContent.trim();
+
+                if (config.developers.includes(text)) {
+                    val.style.color = '#640000';
+                    val.style.borderLeft = '8px solid #FF0000';
+                }
+
+                if (config.marketing.includes(text)) {
+                    val.style.color = '#644000';
+                    val.style.borderLeft = '8px solid #FFA500';
+                }
+            });
     }
 
     try {
         highlightPMs();
     } catch (e) {
-        console.error("Error in highlightPMs:", e);
+        console.error('Error in highlightPMs:', e);
     }
 }
 
