@@ -1,25 +1,48 @@
-{
-	const TYPE_ICON_MAP = {
-		'Gehen bestätigen': ':pepewave:',
-		Pause: ':double_vertical_bar:',
-		'Kommen bestätigen': ':this_is_fine_fire:',
-	};
-
-	const button = document.querySelector('#my-presence-info-submit');
-	button.addEventListener('click', () => {
-		const type = document.querySelector('#myModalLabel')?.innerText || '';
-		setCustomStatus(TYPE_ICON_MAP[type]);
-	});
-
-	async function setCustomStatus(type) {
-		// Encode type for URL safety
-		const encodedType = encodeURIComponent(type);
-
-		// Open new window with type as query param
-		window.open(
-			`https://mattermost.anexia-it.com/anexia/channels/me-myself-and-i?type=${encodedType}`,
-			'_blank',
-			'width=800,height=600'
-		);
-	}
+function waitForElement(selector, callback, intervalTime = 200) {
+	const interval = setInterval(() => {
+		const element = document.querySelector(selector);
+		if (element) {
+			clearInterval(interval);
+			callback(element);
+		}
+	}, intervalTime);
 }
+
+async function clickButtonByTypeWhenReady() {
+	const params = new URLSearchParams(window.location.search);
+	const type = params.get('type');
+
+	if (!type) {
+		console.warn('No "type" query parameter found.');
+		return;
+	}
+
+	const button = await new Promise((resolve) =>
+		waitForElement('#CustomizeYourExperienceTour button:has(img)', resolve)
+	);
+	button.click();
+
+	const customStatusButton = await new Promise((resolve) =>
+		waitForElement('#status-menu-custom-status > button', resolve)
+	);
+	customStatusButton.click();
+
+	const recentStatusButton = await new Promise((resolve) =>
+		waitForElement(
+			`.statusSuggestion__row.cursor--pointer:has([aria-label="${type}"]`,
+			resolve
+		)
+	);
+
+	recentStatusButton.click();
+
+	const setStatusButton = await new Promise((resolve) =>
+		waitForElement(`.modal-footer button:last-child`, resolve)
+	);
+	setStatusButton.click();
+
+	window.opener?.postMessage({ status: 'finished' }, '*');
+}
+
+clickButtonByTypeWhenReady();
+
