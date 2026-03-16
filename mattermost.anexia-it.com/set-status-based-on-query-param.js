@@ -23,7 +23,7 @@ async function clickButtonByTypeWhenReady() {
 	button.click();
 
 	const customStatusButton = await new Promise((resolve) =>
-		waitForElement('#status-menu-custom-status > button', resolve)
+		waitForElement('#userAccountMenu > li:nth-of-type(2)', resolve)
 	);
 	customStatusButton.click();
 
